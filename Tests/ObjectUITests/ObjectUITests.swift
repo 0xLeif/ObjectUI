@@ -3,9 +3,11 @@
 
     final class ObjectUITests: XCTestCase {
         func testExample() {
-            // This is an example of a functional test case.
-            // Use XCTAssert and related functions to verify your tests produce the correct
-            // results.
-            XCTAssertEqual(ObjectUI().text, "Hello, World!")
+            enum Value: String {
+                case text
+            }
+            let object = Object()
+            object.set(variable: Value.text, value: "Hello, World!")
+            XCTAssertEqual(object.text.value(), "Hello, World!")
         }
     }
