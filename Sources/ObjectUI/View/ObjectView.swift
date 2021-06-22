@@ -24,3 +24,13 @@ public struct ObjectView<Content>: View where Content: View {
         content(object)
     }
 }
+
+struct ObjectView_Previews: PreviewProvider {
+    static var previews: some View {
+        ObjectView(data: "Hello, World 👋") { object in
+            object.value(as: String.self).map { message in
+                Text(message)
+            }
+        }
+    }
+}
