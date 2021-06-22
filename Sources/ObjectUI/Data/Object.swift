@@ -5,10 +5,8 @@
 //  Created by Leif on 5/24/21.
 //
 
-import Foundation
 import SwiftFu
 import SwiftUI
-import Combine
 
 @dynamicMemberLookup
 public class Object: FuableClass, ObservableObject {
@@ -18,8 +16,10 @@ public class Object: FuableClass, ObservableObject {
         case array
         case json
     }
+    
     /// Variables of the object
     @Published public var variables: [AnyHashable: Any] = [:]
+    
     /// @dynamicMemberLookup
     public subscript(dynamicMember member: String) -> Object {
         variable(named: member)
