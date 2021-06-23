@@ -21,7 +21,9 @@ struct ContentView: View {
                 }
                 
                 Button("Wave") {
-                    object.set(value: "👋")
+                    DispatchQueue.main.async {
+                        object.set(value: "👋")
+                    }
                 }
             }
         }
