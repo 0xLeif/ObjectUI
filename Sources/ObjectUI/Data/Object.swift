@@ -63,21 +63,22 @@ public class Object: FuableClass, ObservableObject {
     // MARK: private init
     
     private init(array: [Any]) {
-        set(variable: ObjectVariable.array, value: array.map {
-            Object($0)
-        })
+        set(
+            variable: ObjectVariable.array.rawValue,
+            value: array.map { Object($0) }
+        )
     }
     private init(dictionary: [AnyHashable: Any]) {
         variables = dictionary
     }
     private init(data: Data) {
         defer {
-            set(variable: ObjectVariable.json, value: String(data: data, encoding: .utf8))
+            set(variable: ObjectVariable.json.rawValue, value: String(data: data, encoding: .utf8))
             set(value: data)
         }
         if let json = try? JSONSerialization.jsonObject(with: data,
                                                         options: .allowFragments) as? [Any] {
-            set(variable: ObjectVariable.array, value: json)
+            set(variable: ObjectVariable.array.rawValue, value: json)
             return
         }
         guard let json = try? JSONSerialization.jsonObject(with: data,
@@ -93,9 +94,9 @@ public class Object: FuableClass, ObservableObject {
 
 public extension Object {
     var array: [Object] {
-        if let array = variables[ObjectVariable.array] as? [Data] {
+        if let array = variables[ObjectVariable.array.rawValue] as? [Data] {
             return array.map { Object(data: $0) }
-        } else if let array = variables[ObjectVariable.array] as? [Any] {
+        } else if let array = variables[ObjectVariable.array.rawValue] as? [Any] {
             return array.map { value in
                 guard let json = value as? [AnyHashable: Any] else {
                     return Object(value)
@@ -107,11 +108,15 @@ public extension Object {
     }
     
     var child: Object {
-        (variables[ObjectVariable.child] as? Object) ?? Object()
+        (variables[ObjectVariable.child.rawValue] as? Object) ?? Object()
+    }
+    
+    var json: Object {
+        (variables[ObjectVariable.json.rawValue] as? Object) ?? Object()
     }
     
     var value: Any {
-        variables[ObjectVariable.value] ?? Object()
+        variables[ObjectVariable.value.rawValue] ?? Object()
     }
 }
 
@@ -135,7 +140,7 @@ public extension Object {
     }
     /// Set a named Value to the current object
     @discardableResult
-    func set(variable named: AnyHashable = ObjectVariable.value, value: Any?) -> Self {
+    func set(variable named: AnyHashable = ObjectVariable.value.rawValue, value: Any?) -> Self {
         guard let value = value,
               (unwrap(value) as? NSNull) == nil else {
             return self
@@ -145,21 +150,9 @@ public extension Object {
         
         return self
     }
-    /// Set a named Value to the current object
-    @discardableResult
-    func set<T>(variable named: T, value: Any?) -> Self where T: RawRepresentable, T.RawValue == String {
-        guard let value = value,
-              (unwrap(value) as? NSNull) == nil else {
-            return self
-        }
-        
-        variables[named.rawValue] = value
-        
-        return self
-    }
     /// Modify a Value with a name to the current object
     @discardableResult
-    func modify<T>(variable named: AnyHashable = ObjectVariable.value, modifier: (T?) -> T?) -> Self {
+    func modify<T>(variable named: AnyHashable = ObjectVariable.value.rawValue, modifier: (T?) -> T?) -> Self {
         guard let variable = variables[named],
               let value = variable as? T else {
             variables[named] = modifier(nil)
@@ -172,7 +165,7 @@ public extension Object {
     }
     /// Update a Value with a name to the current object
     @discardableResult
-    func update<T>(variable named: AnyHashable = ObjectVariable.value, modifier: (T) -> T) -> Self {
+    func update<T>(variable named: AnyHashable = ObjectVariable.value.rawValue, modifier: (T) -> T) -> Self {
         guard let variable = variables[named],
               let value = variable as? T else {
             return self
@@ -184,14 +177,14 @@ public extension Object {
     /// Set the ChildObject with a name of `_object` to the current object
     @discardableResult
     func set(childObject object: Object) -> Self {
-        variables[ObjectVariable.child] = object
+        variables[ObjectVariable.child.rawValue] = object
         
         return self
     }
     /// Set the Array with a name of `_array` to the current object
     @discardableResult
     func set(array: [Any]) -> Self {
-        variables[ObjectVariable.array] = array
+        variables[ObjectVariable.array.rawValue] = array
         
         return self
     }
