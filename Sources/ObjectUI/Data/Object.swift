@@ -257,3 +257,13 @@ extension Object: CustomStringConvertible {
         """
     }
 }
+
+extension Object: Hashable {
+    public static func == (lhs: Object, rhs: Object) -> Bool {
+        lhs.description == rhs.description
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(description)
+    }
+}
