@@ -230,3 +230,30 @@ private extension Object {
         return unwrappedValue
     }
 }
+
+extension Object: CustomStringConvertible {
+    public var description: String {
+        """
+        Object {
+        \(
+            variables
+                .map { (key, value) in
+                    guard let object = value as? Object else {
+                        return "|\t* \(key): \(value) (\(type(of: value)))"
+                    }
+                    
+                    let values = object.description.split(separator: "\n")
+                        .dropFirst()
+                    
+                    if values.dropLast().isEmpty {
+                        return "|\t* \(key): Object { }"
+                    }
+                    
+                    return "|\t* \(key): Object {\n\(values.map { "|\t \($0)" }.joined(separator: "\n"))"
+                }
+                .joined(separator: "\n")
+        )
+        }
+        """
+    }
+}
