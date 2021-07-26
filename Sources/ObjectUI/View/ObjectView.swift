@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct ObjectView<Content>: View where Content: View {
-    @ObservedObject private var object: Object
+    @StateObject private var object: Object = Object()
     
     private var content: (Object) -> Content
     
@@ -16,8 +16,8 @@ public struct ObjectView<Content>: View where Content: View {
         data: Any? = nil,
         content: @escaping (Object) -> Content
     ) {
-        self.object = Object(data)
         self.content = content
+        self.object.consume(Object(data))
     }
     
     public var body: some View {
