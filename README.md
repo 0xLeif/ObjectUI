@@ -7,24 +7,38 @@
 import ObjectUI
 ```
 
-### Basic Example
+### Basic Examples
+
+#### ObjectView
 ```swift
 struct ContentView: View {
     var body: some View {
-        ObjectView { object in
-            VStack {
-                if let value = object.value(as: String.self) {
-                    Text(value)
-                        .font(.largeTitle)
-                } else {
-                    Text("Waiting...")
-                }
-                
-                Button("Wave") {
-                    DispatchQueue.main.async {
-                        object.set(value: "👋")
+        ObjectView(data: "Hello, World 👋") { object in
+            if let text = object.value(as: String.self) {
+                Text(text)
+            } else {
+                ProgressView()
+                    
+            }
+        }
+    }
+}
+```
+
+#### StateObjectView
+```swift
+struct ContentView: View {
+    var body: some View {
+        StateObjectView { object in
+            if let text = object.value(as: String.self) {
+                Text(text)
+            } else {
+                ProgressView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            object.set(value: "👋")
+                        }
                     }
-                }
             }
         }
     }
