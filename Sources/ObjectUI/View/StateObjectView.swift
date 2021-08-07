@@ -7,16 +7,14 @@
 
 import SwiftUI
 
-public struct ObjectView<Content>: View where Content: View {
-    @ObservedObject private var object: Object
+public struct StateObjectView<Content>: View where Content: View {
+    @StateObject private var object: Object = Object()
     
     private let content: (Object) -> Content
     
     public init(
-        data: Any? = nil,
         @ViewBuilder content: @escaping (Object) -> Content
     ) {
-        self.object = Object(data)
         self.content = content
     }
     
@@ -25,14 +23,18 @@ public struct ObjectView<Content>: View where Content: View {
     }
 }
 
-struct ObjectView_Previews: PreviewProvider {
+struct StateObjectView_Previews: PreviewProvider {
     static var previews: some View {
-        ObjectView(data: "Hello, World 👋") { object in
+        StateObjectView { object in
             if let text = object.value(as: String.self) {
                 Text(text)
             } else {
                 ProgressView()
-                    
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            object.set(value: "👋")
+                        }
+                    }
             }
         }
     }
