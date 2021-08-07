@@ -8,16 +8,16 @@
 import SwiftUI
 
 public struct ObjectView<Content>: View where Content: View {
-    @StateObject private var object: Object = Object()
+    @ObservedObject private var object: Object
     
-    private var content: (Object) -> Content
+    private let content: (Object) -> Content
     
     public init(
         data: Any? = nil,
-        content: @escaping (Object) -> Content
+        @ViewBuilder content: @escaping (Object) -> Content
     ) {
+        self.object = Object(data)
         self.content = content
-        self.object.consume(Object(data))
     }
     
     public var body: some View {
@@ -28,8 +28,11 @@ public struct ObjectView<Content>: View where Content: View {
 struct ObjectView_Previews: PreviewProvider {
     static var previews: some View {
         ObjectView(data: "Hello, World 👋") { object in
-            object.value(as: String.self).map { message in
-                Text(message)
+            if let text = object.value(as: String.self) {
+                Text(text)
+            } else {
+                ProgressView()
+                    
             }
         }
     }
